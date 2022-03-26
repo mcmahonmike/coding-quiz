@@ -49,6 +49,11 @@ button {
     color: white;
     border: 5px whitesmoke;
     border-radius: 5%;
+    margin: 10px;
+}
+
+button:hover {
+    opacity: .5;
 }
 
 #start-button {
