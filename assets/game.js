@@ -5,9 +5,12 @@ var answersEl = document.getElementById('answer-btns')
 var buttonEl = document.querySelector('#start-button')
 var quizDescription = document.querySelector('#description')
 var answerAlert = document.createElement('div')
-answerAlert.setAttribute('class', 'answers')
+//answerAlert.setAttribute('class', 'answers')
+var countdownEl = document.getElementById('countdown')
 var startTime = 60
 var time = startTime
+var score = 0
+var scoreEl = document.getElementById('score')
 var questionIndex = 0
 var intervalID
 var questionsArray = [
@@ -17,36 +20,51 @@ var questionsArray = [
         answer2: "{ } curly brackets",
         answer3: "( ) parenthesis",
         answer4: "= = double equals",
-        correctAnswer: "[ ] square brackets",
+        correctAnswer: "[ ] square brackets"
     },
     {
         question: "What?",
         answer1: "t",
         answer2: "m",
         answer3: "m",
-        answer4: "f"
+        answer4: "f",
+        correctAnswer: "t"
     },
     {
         question: "Why?",
         answer1: "s",
         answer2: "d",
         answer3: "m",
-        answer4: "f"
-    }
-       
+        answer4: "f",
+        correctAnswer: "d"
+    },
+    {
+        question: "Why?",
+        answer1: "s",
+        answer2: "d",
+        answer3: "m",
+        answer4: "f",
+        correctAnswer: "d"
+    },
+    {
+        question: "Why?",
+        answer1: "s",
+        answer2: "d",
+        answer3: "m",
+        answer4: "f",
+        correctAnswer: "d"
+    },   
     
 ]
 
-// buttonEl.addEventListener('click', function(){
-//     var h1 = document.getElementById('quiz-questions')
-//     h1.innerText = "Question #1"
-//     var answersList = document.getElementById('answer-btns')
-//     answersList = document.createElement('ol')
-// })
 
 
 var createQuestions = function (){
  questionsEl.innerText = questionsArray[questionIndex].question
+ var choicesContainer = document.createElement('div')
+ choicesContainer.setAttribute('id', 'choicesContainer')
+ buttonEl.setAttribute('class', 'hide' )
+ quizDescription.setAttribute('class', 'hide')
  var btnA = document.createElement('button')
  var btnB = document.createElement('button')
  var btnC = document.createElement('button')
@@ -56,10 +74,18 @@ var createQuestions = function (){
  btnC.innerText = questionsArray[questionIndex].answer3
  btnD.innerText = questionsArray[questionIndex].answer4
 
- answersEl.appendChild(btnA)
- answersEl.appendChild(btnB)
- answersEl.appendChild(btnC)
- answersEl.appendChild(btnD)
+ btnA.className = 'choices'
+ btnB.className = 'choices'
+ btnC.className = 'choices'
+ btnD.className = 'choices'
+
+
+ choicesContainer.appendChild(btnA)
+ choicesContainer.appendChild(btnB)
+ choicesContainer.appendChild(btnC)
+ choicesContainer.appendChild(btnD)
+
+ answersEl.appendChild(choicesContainer)
 
  btnA.addEventListener('click', answerAction)
  btnB.addEventListener('click', answerAction)
@@ -69,31 +95,67 @@ var createQuestions = function (){
 }
 
 var answerAction = function (event) {
+    event.stopPropagation()
+    event.preventDefault()
     var answerClicked = event.target.innerText
-    if (answerClicked === questionsArray[questionIndex].correctAnswer){
+   
+    questionIndex++
+    
+    if (answerClicked === questionsArray[questionIndex-1].correctAnswer){
+        window.alert('correct')
+        score++
+        scoreEl.innerText = score
         
+    } else {
+        window.alert('wrong')
+        time -= 10
+       
+    }
+    startQuiz()
+    
         
     }
-    
-    
-        
+function startTimer() {
+    intervalID = setInterval(function() {
+        time--
+        countdownEl.innerText = time
+        if (time === 0) {
+          finishQuiz()
+        }
+      }, 1000)
     }
-    
+   
 
-//}
+    
+var finishQuiz = function () {
+    clearInterval(intervalID)
+    var initials = prompt('What are you initials?')
+    var data = { initials: initials, score: score }
+    localStorage.setItem('highScore', JSON.stringify(data))
+    var playAgain = confirm('Want to play again?')
+    if (playAgain) {
+      window.location.reload()
+    }
+
+}
+
+
 
 
 
 function startQuiz () {
-    var clear = document.querySelector('#flex-container')
-    clear.removeChild(buttonEl)
-    var remove = document.querySelector('#answer-btns')
-    remove.removeChild(quizDescription)
-    
 
+
+    if(questionIndex > 0){
+        var buttons = document.querySelector('#choicesContainer')
+        buttons.remove()
+        questionsEl.innerHTML = ''
+    }
+   
 createQuestions();
+startTimer();
 }
 
-//startQuiz()
+
 
 buttonEl.addEventListener('click', startQuiz)

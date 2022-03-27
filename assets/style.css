@@ -63,3 +63,7 @@ button:hover {
     align-items: center;
     align-content: center;
 }
+
+.hide {
+    display: none;
+}
